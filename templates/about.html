@@ -7,5 +7,17 @@
 </head>
 <body>
     <h1>About</h1>
+    <form method="post" action="/about">
+        <input type="text" name="name">
+        <button type="submit">submit</button>
+    </form>
+
+    <pre>
+        <!-- xss injection -->
+        <!-- <img src="asdf" onerror=alert('errr')> -->
+        <!-- <img src=1 onerror="javascript:alert('errr2')"> -->
+        <!-- <script>alert("hello")</script> -->
+        {{ userInput | safe }}
+    </pre>
 </body>
 </html>

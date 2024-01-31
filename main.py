@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -6,9 +6,13 @@ app = Flask(__name__)
 def home():
     return render_template("index.html")
 
-@app.route("/about")
+@app.route("/about", methods=["GET", "POST"])
 def about():
-    return render_template("about.html")
+    userInput = ""
+    if request.method == "POST":
+        userInput = request.form.get("name", "")
+    return render_template("about.html", userInput=userInput)
+
 
 
 if __name__ == "__main__":
