@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 import requests
 
@@ -27,20 +27,31 @@ def signup():
         userName = request.form.get("userName")
         password = request.form.get("password")
 
-        query = f"SELECT username, password FROM users WHERE username='{userName}' AND password='{password}'"
+        query = f"SELECT user_id, username, password FROM users WHERE username='{userName}' AND password='{password}'"
         
         result = db.engine.execute(query)
         # user = result.fetchall()
         user = result.fetchone()
 
         if user:
-            message = f"welcome, {user}"
+            return redirect(url_for("welcome", user_id = user[0]))
         else:
             message = "Incorrect username or password"
 
     return render_template("login.html", message=message)
 
+@app.route("/welcome/<int:user_id>", methods=["GET"])
+def welcome(user_id):
+    query = f"select username from users where user_id={user_id}"
 
+    result = db.engine.execute(query)
+    user = result.fetchone()
+
+    if user:
+        return f"welcome, {user[0]}, you are logged in"
+    else:
+        return "user not found"
+    
 def blackList(string):
     badChars = ["'", ";", "--"]
     for char in badChars:
